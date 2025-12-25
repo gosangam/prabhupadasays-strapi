@@ -43,8 +43,7 @@ export default factories.createCoreController(
         },
       });
 
-      const sanitizedEntity = await this.sanitizeOutput(entity, ctx);
-      return this.transformResponse(sanitizedEntity);
+      ctx.body = entity;
     },
   }),
 );
