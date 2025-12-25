@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "saved_posts",
+  "info": {
+    "singularName": "saved-post",
+    "pluralName": "saved-posts",
+    "displayName": "Saved Post"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "collection": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::collection.collection",
+      "inversedBy": "saved_posts"
+    },
+    "post": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::post.post"
+    },
+    "saved_by": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}
