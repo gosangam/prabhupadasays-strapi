@@ -114,6 +114,24 @@
         }
       }
     },
+    "lecture_name": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "source"
+            },
+            "lecture"
+          ]
+        }
+      }
+    },
     "date": {
       "type": "date",
       "pluginOptions": {
@@ -160,6 +178,12 @@
         }
       },
       "customField": "plugin::url-input.url"
+    },
+    "topics": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::topic.topic",
+      "inversedBy": "posts"
     }
   }
 }

@@ -1,8 +1,7 @@
-import * as React from "react";
-import { useIntl } from "react-intl";
-import { Field, TextInput } from "@strapi/design-system";
-import { Link } from "@strapi/design-system";
-import { ExternalLink } from "@strapi/icons";
+import * as React from 'react';
+import { useIntl } from 'react-intl';
+import { Field, TextInput, Link } from '@strapi/design-system';
+import { ExternalLink } from '@strapi/icons';
 
 interface InputProps {
   attribute: {
@@ -14,18 +13,13 @@ interface InputProps {
     defaultMessage: string;
   };
   disabled?: boolean;
-  error?: {
-    id: string;
-    defaultMessage: string;
-  };
+  error?: string;
   intlLabel: {
     id: string;
     defaultMessage: string;
   };
   name: string;
-  onChange: (event: {
-    target: { name: string; value: string; type: string };
-  }) => void;
+  onChange: (event: { target: { name: string; value: string; type: string } }) => void;
   placeholder?: {
     id: string;
     defaultMessage: string;
@@ -45,7 +39,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     name,
     onChange,
     required = false,
-    value = "",
+    value = '',
     placeholder,
     hint,
   } = props;
@@ -73,20 +67,28 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   };
 
   const isValid = validateUrl(value);
+
+  // Safety check for localized strings
+  const safeFormat = (messageObj?: { id: string; defaultMessage: string }, fallback?: string) => {
+    if (messageObj?.id) {
+      return formatMessage(messageObj);
+    }
+    return messageObj?.defaultMessage || fallback || '';
+  };
+
   const errorMessage = error
-    ? formatMessage(error)
+    ? error
     : !isValid && value
-      ? "Please enter a valid URL"
+      ? formatMessage({
+          id: 'url-field.validation.invalid',
+          defaultMessage: 'Please enter a valid URL',
+        })
       : undefined;
 
   return (
-    <Field.Root
-      name={name}
-      error={errorMessage}
-      hint={hint}
-      required={required}
-    >
-      <Field.Label>{formatMessage(intlLabel)}</Field.Label>
+    <Field.Root name={name} error={errorMessage} hint={hint} required={required}>
+      {/* SAFE LABEL */}
+      <Field.Label>{safeFormat(intlLabel, name)}</Field.Label>
 
       <TextInput
         ref={ref}
@@ -95,22 +97,29 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         value={value}
         onChange={handleChange}
         disabled={disabled}
+        /* SAFE PLACEHOLDER */
         placeholder={
-          placeholder ? formatMessage(placeholder) : "https://example.com"
+          placeholder?.id
+            ? formatMessage(placeholder)
+            : formatMessage({
+                id: 'url-field.placeholder.default',
+                defaultMessage: 'https://example.com',
+              })
         }
         hasError={!!errorMessage}
         aria-invalid={!!errorMessage}
-        aria-describedby={errorMessage ? `${name}-error` : undefined}
       />
 
       {errorMessage && <Field.Error />}
-
       {hint && !errorMessage && <Field.Hint />}
 
       {value && isValid && (
-        <div style={{ marginTop: "8px" }}>
+        <div style={{ marginTop: '8px' }}>
           <Link href={value} isExternal startIcon={<ExternalLink />}>
-            Open link in new tab
+            {formatMessage({
+              id: 'url-field.open-link',
+              defaultMessage: 'Open link in new tab',
+            })}
           </Link>
         </div>
       )}
@@ -118,6 +127,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   );
 });
 
-Input.displayName = "UrlFieldInput";
+Input.displayName = 'UrlFieldInput';
 
 export default Input;

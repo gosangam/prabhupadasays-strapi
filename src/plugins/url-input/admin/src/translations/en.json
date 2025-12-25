@@ -1,1 +1,9 @@
-{}
+{
+  "url-input.name": "url",
+  "url-input.label": "URL",
+  "url-input.description": "A clickable URL field with validation",
+  "url-input.plugin.name": "URL Input",
+  "url-field.placeholder.default": "https://example.com",
+  "url-field.validation.invalid": "Please enter a valid URL",
+  "url-field.open-link": "Open link in new tab"
+}
