@@ -1,5 +1,5 @@
 # Build stage
-FROM node:22-alpine AS builder
+FROM node:20-alpine AS builder
 
 # Install dependencies required for building
 RUN apk add --no-cache build-base gcc autoconf automake zlib-dev libpng-dev nasm bash vips-dev git
@@ -51,8 +51,8 @@ WORKDIR /app
 # Copy package files
 COPY package.json yarn.lock ./
 
-# Install production dependencies only
-RUN yarn install --frozen-lockfile --production
+# Install all dependencies (including devDependencies for TypeScript runtime)
+RUN yarn install --frozen-lockfile
 
 # Copy built application from builder
 COPY --from=builder /app/dist ./dist
@@ -61,6 +61,7 @@ COPY --from=builder /app/config ./config
 COPY --from=builder /app/database ./database
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/favicon.png ./favicon.png
+COPY --from=builder /app/tsconfig.json ./tsconfig.json
 
 # Set environment variables
 ENV NODE_ENV=production
